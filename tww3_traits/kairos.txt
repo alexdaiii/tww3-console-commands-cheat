@@ -1,0 +1,23 @@
+# kairos.txt  -  ancillary loadout for Kairos.  Generate with:
+#     python3 make_apply_items_lua.py kairos      ->  writes kairos.lua
+# one id per line; blank lines / #comments ignored; inline "id # note" ok.
+#
+# ===== EQUIPMENT (1 slot each) =====================================
+wh3_main_anc_armour_scintillating_shield          # Armour  - Barrier +1000, charge reflect
+wh_main_anc_arcane_item_forbidden_rod             # Arcane  - Spell intensity +10%
+wh3_dlc24_anc_enchanted_item_book_of_secrets      # Enchant - WoM cost -10% all spells (Tzeentch)
+wh2_main_anc_talisman_sapphire_guardian_phoenix   # Talisman- Spell res 45% + reserve + heal
+wh3_main_anc_weapon_staff_of_change               # Weapon  - WoM change +50%, Tzeentch corr +5
+
+# ===== ANCILLARY SLOTS (followers + banners share 5) ===============
+wh3_main_anc_follower_personal_sycophant          # MUST  - +200% char xp, +100 unit xp/turn, +move
+wh3_main_anc_follower_the_dark_princes_paramour   # MUST  - Growth +250 (has PO swing +25/-50)
+wh3_main_anc_follower_tze_sorcerers_apprentice    # caster- WoM power reserve capacity +18
+wh3_main_anc_magic_standard_icon_of_sorcery       # banner- Tzeentch caster army banner
+wh3_main_anc_follower_tze_tzeentchian_philosopher # OPT   - Grimoires +25% (LOCAL region only)
+
+# --- alt ancillaries to swap in (uncomment, keep total <=5) ---
+# wh3_main_anc_follower_tze_alchemist              # +10% income from all buildings
+# wh3_main_anc_follower_tze_agent_of_change        # +10% magic item drop chance
+# wh3_main_anc_magic_standard_banner_of_change     # alt Tzeentch banner
+# wh3_main_anc_magic_standard_great_icon_of_despair# alt banner: terror / leadership debuff

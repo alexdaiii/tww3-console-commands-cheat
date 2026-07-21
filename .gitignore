@@ -1,0 +1,16 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+WH3-Dump/
+
+# Generated SQLite mirror of the game DB (large, rebuildable via build_db.py)
+*.sqlite
+tww3_traits/wh3.sqlite

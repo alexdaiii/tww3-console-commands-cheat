@@ -1,0 +1,22 @@
+# items.txt  -  one ancillary id per line.  Blank lines and #comments ignored.
+# Inline notes allowed:   <id>   # my note
+#
+# Generate the Lua:   python3 make_apply_items_lua.py
+# (writes apply_selected_items.lua ; the mod runs it and grants/equips each item)
+#
+# ============================ KAIROS CASTER KIT ============================
+wh3_main_anc_armour_scintillating_shield          # Armour  - Barrier +1000, charge reflect
+wh_main_anc_arcane_item_forbidden_rod             # Arcane  - Spell intensity +10%
+wh3_dlc24_anc_enchanted_item_book_of_secrets      # Enchant - WoM cost -10% all spells (Tzeentch)
+wh2_main_anc_talisman_sapphire_guardian_phoenix   # Talisman- Spell res 45% + reserve + heal
+wh3_main_anc_weapon_staff_of_change               # Weapon  - WoM change +50%, Tzeentch corr +5
+
+# ============================ FOLLOWERS (stackable) =======================
+wh3_main_anc_follower_personal_sycophant          # +200% char xp, +100 unit xp/turn, +move/LoS
+wh3_main_anc_follower_tze_tzeentchian_philosopher # Grimoires from all buildings +25% (Tzeentch)
+wh3_main_anc_follower_the_dark_princes_paramour   # Growth +250 (note: also public-order swing)
+
+# ============================ BANNER (one slot) ===========================
+wh3_main_anc_magic_standard_icon_of_sorcery       # Tzeentch caster banner
+# wh3_main_anc_magic_standard_banner_of_change    # alt Tzeentch banner
+# wh3_main_anc_magic_standard_great_icon_of_despair  # alt: terror/leadership debuff

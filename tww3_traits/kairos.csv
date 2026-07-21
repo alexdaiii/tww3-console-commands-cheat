@@ -1,0 +1,16 @@
+unit_id,num_units,army_name
+wh3_main_tze_inf_pink_horrors_0,7,early
+wh3_main_tze_mon_flamers_0,4,early
+wh3_main_tze_inf_forsaken_0,4,early
+wh3_main_tze_mon_screamers_0,2,early
+wh3_main_tze_inf_chaos_furies_0,2,early
+wh3_main_tze_mon_exalted_flamers_0,5,mid
+wh3_twa06_tze_inf_pink_horrors_ror_0,4,mid
+wh3_main_tze_cav_doom_knights_0,4,mid
+wh3_main_tze_cav_chaos_knights_0,3,mid
+wh3_main_tze_mon_soul_grinder_0,2,mid
+wh3_main_tze_mon_lord_of_change_0,1,mid
+wh3_main_tze_mon_exalted_flamers_0,9,late
+wh3_twa07_tze_cav_doom_knights_ror_0,5,late
+wh3_twa08_tze_mon_lord_of_change_0_ror,3,late
+wh3_main_tze_mon_soul_grinder_0,2,late
