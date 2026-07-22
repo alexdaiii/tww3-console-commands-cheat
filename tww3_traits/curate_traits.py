@@ -22,6 +22,7 @@ from openpyxl.utils import get_column_letter
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT_LUA = os.path.join(HERE, "power_traits.lua")
 OUT_XLSX = os.path.join(HERE, "power_traits.xlsx")
+OUT_TXT = os.path.join(HERE, "power_traits_summary.txt")
 
 # --- effect classification by rendered text (lowercased) --------------------
 SURVIVE_KW = [
@@ -35,39 +36,93 @@ ECON_KW = [
     "income", "gold", "upkeep", "growth", "construction cost", "build cost",
     "research", "trade", "sacking", "loot", "post-battle",
     "tax", "money", "cost of", "replenish", "recruit", "control", "public order",
+    "public_order",   # the loc token {{tr:public_order_effect}} renders un-spaced
 ]
 ATTACK_KW = [
     "melee attack", "weapon strength", "charge bonus", "armour-piercing",
     "armour piercing", "bonus vs", "magic attacks", "spell damage",
     "missile damage", "missile strength", "reload", "ammunition", "damage:",
     "attack interval", "explosion", "flaming attacks",
+    # Fear/Terror = enemy-morale attributes (value +1 = granted to us); spell/
+    # ability cooldown reductions (value is negative but BENEFICIAL - see the
+    # positive-cooldown guard in main()).
+    "causes fear", "causes terror", "cooldown",
 ]
 # Army = anything applied force-wide (by effect scope) OR clearly unit-wide text.
 ARMY_SCOPE_HINT = "force"
 ARMY_KW = ["for all", "all units", "army", "reinforc", "campaign movement", "ambush"]
+# Diplomacy = +relations traits (the "reinforcing"/"likes X" situational traits).
+# Only POSITIVE ones survive to bucket() - is_unwanted() drops any diplo effect
+# that carries a negative number.
+DIPLO_KW = ["diplomatic relations", "diplomacy"]
 
-# effects that are self-harmful in battle -> exclude the whole trait.
-# (Each is the effect name followed by a negative value, so we never catch a buff.)
-HARM_KW = [
-    "melee attack: -", "leadership: -", "speed: -", "charge bonus: -",
-    "weapon strength: -", "melee defence: -", "armour: -", "hit points: -",
-    "resistance: -", "ward save: -", "missile strength: -",
-    "bonus vs large: -", "bonus vs infantry: -",
+# stats where a NEGATIVE value is ALWAYS a self-debuff (never a cost saving) ->
+# exclude the whole trait. We match the stat *name* and decide harm from the raw
+# value's sign, NOT a literal ": -" in the rendered text - the old text match
+# missed wordings like "aura leadership effect: -3" (the word "effect" sits
+# between the stat and the ": -"), which let the Flayed Tail -3 leadership aura
+# through. Genuine enemy debuffs are guarded separately (they read as buffs to us).
+HARM_STATS = [
+    "melee attack", "leadership", "vigour", "speed", "charge bonus",
+    "weapon strength", "melee defence", "armour", "hit points", "resistance",
+    "ward save", "missile strength", "melee damage", "missile damage",
+    "bonus vs large", "bonus vs infantry",
 ]
+
+
+def _neg_value(val: str) -> bool:
+    """True if the effect's raw value is negative."""
+    try:
+        return float(val) < 0
+    except (TypeError, ValueError):
+        return (val or "").strip().startswith("-")
 
 # User rule: skip any trait that touches CORRUPTION (keep control / public order).
 CORRUPTION_KW = "corruption"
 
+# Hand-picked traits whose only effects are "other"-classed text the keyword
+# bucketer can't read (campaign agent/hero-map actions, ability/attribute grants,
+# attrition, wound recovery) but which are beneficial. Each maps to the bucket to
+# file it under. Kept as an explicit allow-list rather than broad keywords so we
+# promote exactly these and don't sweep in un-vetted siblings (e.g. other ability
+# grants). They still pass the harm/corruption/bundled filters below.
+FORCE_INCLUDE = {
+    # battle ability / attribute grants -> Attack
+    "wh2_main_trait_defeated_helmen_ghorst": "attack",   # poison attacks
+    "wh3_main_trait_ice_court_glacial_blaster": "attack",  # Ability: Glacial Blast
+    "wh3_main_trait_ice_court_ice_shard_wielder": "attack",  # Ability: Ice Shard
+    # army-wide / lord campaign survivability -> Army / Survivability
+    "wh3_main_trait_ice_court_eldritch_defender": "army",   # -15% army attrition
+    "wh2_main_trait_defeated_vlad_von_carstein": "survive",  # -4 turn wound recovery
+    "wh2_main_trait_defeated_morathi": "army",   # -10% hero action cost factionwide
+    # campaign agent/hero-map action buffs -> Army (see note: minor on a Lord)
+    "wh2_main_trait_agent_action_assassinate": "army",
+    "wh2_main_trait_agent_action_assault_garrison": "army",
+    "wh2_main_trait_agent_action_assault_unit": "army",
+    "wh2_main_trait_agent_action_assault_units": "army",
+    "wh2_main_trait_agent_action_damage_building": "army",
+    "wh2_main_trait_agent_action_damage_walls": "army",
+    "wh2_main_trait_agent_action_wound": "army",
+    "wh3_main_trait_dilemma_nur_grandfathers_embrace": "army",
+    "wh3_main_trait_ice_court_agent_of_brutality": "army",
+    "wh3_main_trait_ice_court_quiet_warrior": "army",
+}
+
 _NEG = __import__("re").compile(r"-\s*\d")
 
 
-def is_unwanted(rendered: str) -> bool:
+def is_unwanted(rendered: str, scope: str = "") -> bool:
     """Bundled downsides that shouldn't ride along on a power set -> drop trait."""
     low = rendered.lower()
+    sc = (scope or "").lower()
     has_neg = bool(_NEG.search(rendered))
     if "plague" in low:                                   # +plague spread / duration
         return True
-    if ("public order" in low or "public_order" in low) and has_neg:   # -public order
+    # negative public order is self-harm ONLY in your OWN province. An
+    # enemy-province debuff (scope character_to_enemy_province) LOWERS the
+    # enemy's order - a buff to us - so keep it.
+    if (("public order" in low or "public_order" in low) and has_neg
+            and "enemy" not in sc):
         return True
     if "diplomatic relations" in low and has_neg:         # -diplo (e.g. -20 with Empire)
         return True
@@ -83,7 +138,7 @@ def bucket(text: str, scope: str) -> str:
     # enemy debuffs, and anything applied force-wide, are ARMY effects (they help
     # the whole stack) - decide this before the survivability keywords so an
     # "Enemy leadership: -5" or a force-wide leadership aura isn't mislabelled.
-    if "enemy" in t or ARMY_SCOPE_HINT in sc or "aura" in t:
+    if "enemy" in t or "enemy" in sc or ARMY_SCOPE_HINT in sc or "aura" in t:
         return "army"
     if any(k in t for k in SURVIVE_KW):
         return "survive"
@@ -91,6 +146,8 @@ def bucket(text: str, scope: str) -> str:
         return "attack"
     if ARMY_SCOPE_HINT in (scope or "").lower() or any(k in t for k in ARMY_KW):
         return "army"
+    if any(k in t for k in DIPLO_KW):
+        return "diplo"
     if any(k in t for k in ECON_KW):
         return "econ"
     return "other"
@@ -111,7 +168,7 @@ def main():
             continue
         rendered = J.render_effect(r.get("effect", ""), r.get("value", ""), eff_loc)
         raw_by_level.setdefault(lk, []).append(
-            (rendered, r.get("effect_scope", ""), r.get("value", ""))
+            (rendered, r.get("effect_scope", ""), r.get("value", ""), r.get("effect", ""))
         )
 
     # levels grouped by base trait -> pick representative (highest, has effects, self)
@@ -123,8 +180,17 @@ def main():
             lvl = int(r.get("level", "0") or 0)
         except ValueError:
             lvl = 0
+        # threshold_points = how many trait points force_add_trait must add to
+        # REACH this level. NOT the same as the level number: Master Mason lvl 3
+        # needs 15 points, not 3. We pass the TOP level's threshold so the trait
+        # applies at max rank instead of sitting below rank 1 and "popping up"
+        # again during play.
+        try:
+            thr = int(r.get("threshold_points", "0") or 0)
+        except ValueError:
+            thr = 0
         levels_by_trait.setdefault(base, []).append(
-            {"lk": lk, "lvl": lvl, "eff": raw_by_level.get(lk, [])}
+            {"lk": lk, "lvl": lvl, "thr": thr, "eff": raw_by_level.get(lk, [])}
         )
 
     rows = []
@@ -150,43 +216,72 @@ def main():
         if not rep or not rep["eff"]:
             continue
         max_lvl = max((l["lvl"] for l in lvls), default=1)
-        buckets = {"econ": [], "survive": [], "army": [], "attack": [], "other": []}
+        # points to pass to force_add_trait = the top level's threshold_points
+        # (fall back to max_lvl if the data has no thresholds).
+        top_threshold = max((l["thr"] for l in lvls), default=0)
+        buckets = {"econ": [], "survive": [], "army": [], "attack": [],
+                   "diplo": [], "other": []}
         harmful = False
         touches_corruption = False
         bundled_bad = False
-        for rendered, scope, _val in rep["eff"]:
+        struct = []   # (effect_key, value, bucket) for the aggregate summary
+        for rendered, scope, _val, _ekey in rep["eff"]:
             low = rendered.lower()
+            sc = (scope or "").lower()
             if CORRUPTION_KW in low:
                 touches_corruption = True
-            # "Enemy leadership: -X" (and other enemy debuffs) are BUFFS, not
-            # self-harm - never let the negative-stat filter catch them.
-            if "enemy" not in low and any(h in low for h in HARM_KW):
+            # Self-debuff = a harmful combat/leadership stat with a NEGATIVE value
+            # aimed at our OWN side. "Enemy leadership: -X" (and other enemy
+            # debuffs) are BUFFS to us - guard on both the rendered text and the
+            # effect scope so they're never caught by the negative-stat filter.
+            if ("enemy" not in low and "enemy" not in sc and _neg_value(_val)
+                    and any(s in low for s in HARM_STATS)):
                 harmful = True
-            if is_unwanted(rendered):
+            # cooldown is inverted: NEGATIVE = good (shorter), POSITIVE = a
+            # self-debuff (longer). HARM_STATS can't express that, so guard here.
+            try:
+                if "cooldown" in low and float(_val) > 0:
+                    harmful = True
+            except (TypeError, ValueError):
+                pass
+            if is_unwanted(rendered, scope):
                 bundled_bad = True
-            buckets[bucket(rendered, scope)].append(rendered)
+            b = bucket(rendered, scope)
+            buckets[b].append(rendered)
+            struct.append([_ekey, _val, b])
         # drop self-debuffs, corruption traits, and traits with bundled downsides
         if harmful or touches_corruption or bundled_bad:
             continue
-        # must contribute to at least one of the four target areas
-        if not (buckets["econ"] or buckets["survive"] or buckets["army"] or buckets["attack"]):
+        # explicitly-promoted traits: re-file their "other" effects into the
+        # assigned bucket so they clear the "must contribute" gate below.
+        if key in FORCE_INCLUDE and buckets["other"]:
+            buckets[FORCE_INCLUDE[key]].extend(buckets["other"])
+            buckets["other"] = []
+            for s in struct:
+                if s[2] == "other":
+                    s[2] = FORCE_INCLUDE[key]
+        # must contribute to at least one target area (diplomacy now counts)
+        if not (buckets["econ"] or buckets["survive"] or buckets["army"]
+                or buckets["attack"] or buckets["diplo"]):
             continue
         rows.append({
             "id": key,
             "name": name_of(rep["lk"]) or name_of(key),
-            "points": max(max_lvl, 1),
+            "points": max(top_threshold, max_lvl, 1),
             "econ": buckets["econ"],
             "survive": buckets["survive"],
             "army": buckets["army"],
             "attack": buckets["attack"],
+            "diplo": buckets["diplo"],
             "other": buckets["other"],
+            "struct": struct,
         })
 
     rows.sort(key=lambda x: x["id"])
 
-    CATS = ("Survivability", "Attack", "Army", "Economy")
+    CATS = ("Survivability", "Attack", "Army", "Economy", "Diplomacy")
     BKEY = {"Survivability": "survive", "Attack": "attack",
-            "Army": "army", "Economy": "econ"}
+            "Army": "army", "Economy": "econ", "Diplomacy": "diplo"}
 
     # primary category = the target bucket with the most effects
     def primary(x):
@@ -200,7 +295,7 @@ def main():
     for cat in CATS:
         print(f"\n{'='*70}\n{cat}  ({len(grouped[cat])} traits)\n{'='*70}")
         for x in grouped[cat]:
-            eff = x["survive"] + x["attack"] + x["army"] + x["econ"]
+            eff = x["survive"] + x["attack"] + x["army"] + x["econ"] + x["diplo"]
             print(f"  {x['name'] or x['id']}  [{x['id']}]")
             for e in eff[:6]:
                 print(f"      + {e}")
@@ -218,11 +313,73 @@ def main():
         f.write(LUA.format(count=len(rows), body=body))
 
     write_xlsx(rows, grouped, CATS, BKEY)
+    write_summary(rows, eff_loc, CATS, BKEY)
 
     print(f"\nWrote {OUT_LUA}")
     print(f"Wrote {OUT_XLSX}")
+    print(f"Wrote {OUT_TXT}")
     print(f"  {len(rows)} traits: "
           + ", ".join(f"{len(grouped[c])} {c.lower()}" for c in CATS))
+
+
+# --------------------------------------------------------------------------
+# Plaintext aggregate-benefit summary
+# --------------------------------------------------------------------------
+def write_summary(rows, eff_loc, CATS, BKEY):
+    """Sum the whole set's max-level benefit into power_traits_summary.txt.
+
+    Numeric stats are added additively per effect key (rendered back through the
+    effect's own loc template so units/signs/% are correct). Enable-type effects
+    (Fear, poison, ability grants - no numeric placeholder) are listed instead of
+    summed. Effects are grouped by the same effect key, so a stat that appears at
+    both self- and force-scope is pooled - treat totals as a gross paper sum.
+    """
+    from collections import defaultdict
+
+    def is_numeric(ekey):
+        t = eff_loc.get(f"effects_description_{ekey}", "")
+        return "%n" in t or "%+n" in t
+
+    numeric = {b: defaultdict(lambda: [0.0, 0]) for b in BKEY.values()}
+    flags = {b: defaultdict(int) for b in BKEY.values()}
+    for x in rows:
+        for ekey, val, b in x["struct"]:
+            if b not in numeric:          # "other" effects aren't a tallied benefit
+                continue
+            if is_numeric(ekey):
+                try:
+                    numeric[b][ekey][0] += float(val)
+                except (TypeError, ValueError):
+                    continue
+                numeric[b][ekey][1] += 1
+            else:
+                flags[b][J.render_effect(ekey, val, eff_loc)] += 1
+
+    L = []
+    L.append("=" * 74)
+    L.append("CURATED POWER TRAITS - AGGREGATE BENEFIT SUMMARY")
+    L.append(f"{len(rows)} traits, each counted at its MAX level.")
+    L.append("Numeric stats are summed additively across every trait. In-game some")
+    L.append("stats cap or diminish (resistances, ward save) and self- vs army-wide")
+    L.append("scopes are pooled here, so read totals as the gross paper sum, not the")
+    L.append("effective in-battle value.")
+    L.append("=" * 74)
+    for cat in CATS:
+        b = BKEY[cat]
+        num, flg = numeric[b], flags[b]
+        if not num and not flg:
+            continue
+        L.append("")
+        L.append(f"== {cat.upper()} ==")
+        for ekey, (tot, n) in sorted(num.items(), key=lambda kv: -abs(kv[1][0])):
+            L.append(f"  {J.render_effect(ekey, f'{tot:g}', eff_loc)}"
+                     f"   (from {n} trait{'s' if n != 1 else ''})")
+        if flg:
+            L.append("  -- attributes / abilities granted --")
+            for lbl, n in sorted(flg.items()):
+                L.append(f"  {lbl}" + (f"  (x{n})" if n > 1 else ""))
+    with open(OUT_TXT, "w", encoding="utf-8") as f:
+        f.write("\n".join(L) + "\n")
 
 
 # --------------------------------------------------------------------------
@@ -236,6 +393,7 @@ CAT_FILL = {
     "Attack":        PatternFill("solid", fgColor="FCE4D6"),
     "Army":          PatternFill("solid", fgColor="E2EFDA"),
     "Economy":       PatternFill("solid", fgColor="FFF2CC"),
+    "Diplomacy":     PatternFill("solid", fgColor="EAD1DC"),
 }
 
 
@@ -263,6 +421,7 @@ def write_xlsx(rows, grouped, CATS, BKEY):
         ("attack", "Attack effects"),
         ("army", "Army effects"),
         ("econ", "Economy effects"),
+        ("diplo", "Diplomacy effects"),
         ("other", "Other effects"),
     ]
     ws.append([c[1] for c in columns])
@@ -274,7 +433,7 @@ def write_xlsx(rows, grouped, CATS, BKEY):
 
     for cat in CATS:
         for x in grouped[cat]:
-            all_eff = x["survive"] + x["attack"] + x["army"] + x["econ"]
+            all_eff = x["survive"] + x["attack"] + x["army"] + x["econ"] + x["diplo"]
             rec = {
                 "category": cat,
                 "id": x["id"],
@@ -286,6 +445,7 @@ def write_xlsx(rows, grouped, CATS, BKEY):
                 "attack": " | ".join(x["attack"]),
                 "army": " | ".join(x["army"]),
                 "econ": " | ".join(x["econ"]),
+                "diplo": " | ".join(x["diplo"]),
                 "other": " | ".join(x["other"]),
             }
             ws.append([rec[c[0]] for c in columns])
@@ -294,12 +454,12 @@ def write_xlsx(rows, grouped, CATS, BKEY):
     widths = {
         "category": 15, "id": 46, "name": 26, "points": 8, "game": 12,
         "conditional": 12, "survive": 42, "attack": 42, "army": 46,
-        "econ": 42, "other": 34,
+        "econ": 42, "diplo": 34, "other": 34,
     }
     for i, (k, _) in enumerate(columns, start=1):
         ws.column_dimensions[get_column_letter(i)].width = widths.get(k, 18)
     wrap = Alignment(wrap_text=True, vertical="top")
-    wrap_cols = {"survive", "attack", "army", "econ", "other", "name"}
+    wrap_cols = {"survive", "attack", "army", "econ", "diplo", "other", "name"}
     wrap_idx = [i for i, (k, _) in enumerate(columns, start=1) if k in wrap_cols]
     for r in range(2, ws.max_row + 1):
         for i in wrap_idx:

@@ -28,16 +28,57 @@ after the header row — skip it when parsing (join_traits.py's `read_tsv` alrea
   sheet. Provides reusable helpers: `read_tsv`, `read_loc`, `render_effect`, `clean_text`,
   `game_and_dlc`.
 - `curate_traits.py` — filters/curates the "power" traits and buckets them by target area
-  (survivability / attack / army / economy). Outputs `power_traits.xlsx` + `power_traits.lua`.
-  Current result: **230 traits** (38 survivability, 27 attack, 134 army, 31 economy).
+  (survivability / attack / army / economy / **diplomacy**). Outputs `power_traits.xlsx` +
+  `power_traits.lua`. Current result: **306 traits** (39 survivability, 60 attack, 149 army,
+  36 economy, 22 diplomacy).
   Key logic quirks (bugs I fixed — don't reintroduce):
+    * **`FORCE_INCLUDE`** = explicit allow-list (16 keys) the user hand-picked off the
+      `excluded_traits.xlsx` bench: battle abilities (poison / Glacial Blast / Ice Shard),
+      attrition, wound recovery, and the campaign agent/hero-map action traits. Their effects
+      render as unreadable "other" text so keywords can't catch them; each maps to a bucket
+      and is promoted after the harm filters. Deliberately NOT keyworded (a broad `ability`
+      rule would sweep in un-picked siblings like Deadly Onslaught / Heroic Resilience).
+      NOTE for the user: the 7 `agent_action_*` + `grandfathers_embrace`/`quiet_warrior`/
+      `agent_of_brutality` buff AGENT/hero actions — **near-useless on Kairos (a Lord)**;
+      kept because the user asked. The abilities/attrition/wound-recovery ones ARE useful.
+    * **Fear/Terror & spell cooldown are power effects.** `causes fear`/`causes terror` (the
+      "Hates X" / defeated-legend attributes, value +1 = granted to us) and `cooldown` are in
+      ATTACK_KW. Cooldown is INVERTED: negative value = shorter = good; a POSITIVE cooldown is
+      a self-debuff, guarded explicitly in main() (HARM_STATS can't express the sign flip).
+    * **Public order is scope-dependent.** `character_to_enemy_province` negatives (e.g.
+      `post_battle_execute`, `stance_raiding`, `defeated_drycha/skrolk`) LOWER the enemy's
+      order = a buff to us → kept (bucket "army" via the `"enemy" in scope` rule in bucket()).
+      `character_to_province_own` negatives (`realm_khorne` −10, `corrupted_*`) are self-harm
+      → still dropped by is_unwanted (now takes a `scope` arg). Positive own-province order
+      (`Authoritarian` etc.) classifies as Economy — ECON_KW includes the un-spaced loc token
+      `public_order` because `{{tr:public_order_effect}}` doesn't resolve to "public order".
+    * **Points = `threshold_points`, NOT the level number.** `force_add_trait`'s 4th arg is
+      trait POINTS; a trait reaches a level only when points cross that level's
+      `threshold_points` (in `character_trait_levels`). Master Mason lvl 3 needs 15 points,
+      not 3; the 1-level "wins vs Lizardmen" needs 5, not 1. We now pass the TOP level's
+      threshold_points so traits apply at max rank instead of sitting sub-rank-1 and
+      re-"popping up" during play. (`top_threshold` in main().)
+    * **Diplomacy traits are kept.** The +relations "reinforcing_*"/"Likes X" traits (e.g.
+      `wh2_main_trait_reinforcing_beastmen`, +10 diplo) used to bucket to "other" and get
+      dropped by the "must contribute" gate. Added a DIPLO_KW / "diplo" bucket / "Diplomacy"
+      category. Only POSITIVE diplo survives — `is_unwanted()` still drops any diplo effect
+      carrying a negative number (mixed +/- traits).
     * Enemy-debuff guard: `"enemy" not in low` before treating a `"leadership: -"` effect as
       self-harm (else beneficial enemy-morale debuffs get wrongly dropped).
     * `bucket()`: effects with "enemy"/aura/force-scope → "army"; leadership/vigour/morale
       are in SURVIVE_KW so they classify instead of vanishing.
     * Exclude only keys containing `"dummy"`. Keep prologue traits.
+    * Genuinely effect-less flavour traits (34 of them: top level AND every lower level have
+      no `trait_level_effects` rows) are correctly excluded — not a bug.
 - `make_apply_lua.py` — turns a trait-id list into apply-Lua (uses `cm:force_add_trait` via
   `cm:char_lookup_str`). Convention twin of make_apply_items_lua.py.
+- `excluded_traits.py` — the INVERSE of curate: writes `excluded_traits.xlsx` listing every
+  trait NOT in the power set, tagged with the first rule that dropped it (hidden → dummy →
+  DLC-locked → no-effects → self-debuff → corruption → bundled downside → off-target).
+  Imports curate_traits' helpers so the two never drift. "off-target" = traits whose only
+  effects are unrecognised by the bucketer — the review queue for what to promote next
+  (this is how diplomacy, Fear, and cooldown got pulled in). ~31 remain (ability grants like
+  Deadly Onslaught/Glacial Blast, Stalk/Vanguard attributes, poison attacks, hero-map utility).
 
 ### Items pipeline
 - `make_apply_items_lua.py` — turns a `<kit>.txt` list of ancillary ids into `<kit>.lua`.
@@ -71,11 +112,22 @@ Design rule the user set: **tier is a per-stage power CEILING** (so you don't st
 early-campaign AI with top units), not a floor — build the best army under the cap.
 Full stack = Kairos (lord) + **19** units. Tzeentch is a magic/ranged gunline: ranged
 core (armour-ignoring magical fire) + thin melee screen + flyers for artillery/anti-large.
-- **Early (≤ T2):** 7 Pink Horrors, 4 Flamers, 4 Forsaken (screen), 2 Screamers, 2 Chaos Furies.
-- **Mid (T3/4):** 5 Exalted Flamers, 4 Pink Horrors RoR, 4 Doom Knights, 3 Chaos Knights,
-  2 Soul Grinder, 1 Lord of Change.
-- **Late (elite, all T4+, NO T2 — user's call):** 9 Exalted Flamers, 5 Doom Knights RoR,
-  3 Golden Griffin of Theurgy (Lord of Change RoR), 2 Soul Grinder.
+- **Early (≤ T2):** 5 Forsaken (screen), 6 Pink Horrors, 3 Chaos Furies, 5 Flamers. (user reroll)
+- **Mid (T3/4):** 4 Chaos Warriors of Tzeentch (Halberds, `wh3_dlc20_..._mtze_halberds`, free-DLC),
+  6 Blazing Squealers (Exalted Pink Horrors RoR, `wh3_twa06_..._pink_horrors_ror_0`),
+  2 Wyrd Spawn (Chaos Spawn RoR, `wh_pro04_chs_mon_chaos_spawn_ror_0`), 5 Exalted Flamers,
+  2 Knights of Immolation (Doom Knights RoR, `wh3_twa07_..._doom_knights_ror_0`). (user reroll)
+- **Late (elite):** 3 Chaos Warriors of Tzeentch (Halberds, melee frontline/anchor —
+  armour 100 + anti-large is the gunline's main screen vs cav/monsters),
+  1 Wyrd Spawn (Chaos Spawn RoR, infantry-grinder/fear tarpit — kept 1, not 2, since 4 Soul
+  Grinders + halberds already anchor and spawn are armour-10 squishy),
+  4 Blazing Squealers (Exalted Pink Horrors RoR),
+  4 Exalted Flamers, 4 Soul Grinder, 1 Golden Griffin of Theurgy (Lord of Change RoR),
+  2 Knights of Immolation (Doom Knights RoR). (user rerolls: added a melee line vs the old
+  pure-gunline 9-Flamer stack; now includes T2 halberds/spawn, dropping the old "NO T2" rule;
+  then cut Griffins 3→1 and bumped Flamers/Grinders to 4 each to reduce manual-cast micro —
+  Griffin bound spells (Searing Doom / Gehenna's Golden Hounds) are manual-only, Flamers &
+  Grinders auto-fire their ranged attacks.)
 Heroes: `au` adds army *units*, not characters — embed real casters (Exalted Lord of
 Change, Iridescent Horror) the normal way; each eats 1 of the 19 slots. 3–4 casters
 (incl. Kairos) = magic-overwhelm build.

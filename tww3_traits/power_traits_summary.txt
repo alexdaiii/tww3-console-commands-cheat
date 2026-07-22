@@ -1,0 +1,289 @@
+==========================================================================
+CURATED POWER TRAITS - AGGREGATE BENEFIT SUMMARY
+306 traits, each counted at its MAX level.
+Numeric stats are summed additively across every trait. In-game some
+stats cap or diminish (resistances, ward save) and self- vs army-wide
+scopes are pooled here, so read totals as the gross paper sum, not the
+effective in-battle value.
+==========================================================================
+
+== SURVIVABILITY ==
+  Barrier hit points: +1000   (from 1 trait)
+  Armour: +70   (from 7 traits)
+  Melee defence: +63   (from 9 traits)
+  Hit points: +50%   (from 3 traits)
+  Spell resistance: 45%   (from 3 traits)
+  Physical resistance: 40%   (from 4 traits)
+  Leadership: +34   (from 5 traits)
+  Ward save: 20%   (from 2 traits)
+  Armour-piercing weapon damage: +20   (from 1 trait)
+  Missile resistance: 20%   (from 2 traits)
+  Melee defence: +15 on Skeleton Chariot mount   (from 1 trait)
+  Leadership: +5   (from 2 traits)
+  Leadership: +5 when fighting against Dwarfs   (from 1 trait)
+  Leadership: +5 when fighting against Greenskins   (from 1 trait)
+  Leadership: +4 during subterranean intercept battles   (from 1 trait)
+  Leadership: +4 during forest battles   (from 1 trait)
+  Wound recovery time: -4 turns   (from 1 trait)
+  -- attributes / abilities granted --
+  Attacks cause "Discouraged" effect, reducing leadership
+  Attribute: Perfect Vigour  (x4)
+  Attribute: Unbreakable  (x4)
+  Passive ability: "Regeneration"  (x2)
+
+== ATTACK ==
+  Charge bonus: +95   (from 4 traits)
+  Weapon strength: +63%   (from 5 traits)
+  Bonus vs Large: +60   (from 3 traits)
+  Melee attack: +50   (from 8 traits)
+  Cooldown: -50% to "Deadly Onslaught"   (from 1 trait)
+  Cooldown: -50% to "Foe Seeker"   (from 1 trait)
+  Cooldown: -50% to "Volley of Dark Arrows"   (from 1 trait)
+  Cooldown: -40% to spells   (from 4 traits)
+  Ammunition: +25%   (from 1 trait)
+  Missile strength: +20%   (from 2 traits)
+  Missile strength: +20% for Ice Guard units   (from 2 traits)
+  Melee attack: +18 for Ice Guard units   (from 2 traits)
+  Melee attack: +15 when fighting at sea   (from 1 trait)
+  Melee attack: +15 on Skeleton Chariot mount   (from 1 trait)
+  Weapon strength: +12% for Infantry units   (from 2 traits)
+  Melee attack: +10 during subterranean intercept battles   (from 1 trait)
+  Melee attack: +10 when fighting against Beastmen   (from 1 trait)
+  Bonus vs Infantry: +10   (from 1 trait)
+  Cooldown: -10% to all spells   (from 1 trait)
+  Charge bonus: +10% for Cavalry units   (from 1 trait)
+  Cooldown: -10% to "Invocation of Nehek"   (from 1 trait)
+  Missile strength: +7%   (from 1 trait)
+  Melee attack: +5 during forest battles   (from 1 trait)
+  Melee attack: +5%   (from 1 trait)
+  -- attributes / abilities granted --
+  Ability: "Glacial Blast"
+  Ability: "Ice Shard"
+  Attribute: Causes Fear
+  Attribute: Causes Fear when fighting against Beastmen
+  Attribute: Causes Fear when fighting against Cathay
+  Attribute: Causes Fear when fighting against Chaos Dwarfs
+  Attribute: Causes Fear when fighting against Daemons of Chaos
+  Attribute: Causes Fear when fighting against Dark Elves
+  Attribute: Causes Fear when fighting against Dwarfs
+  Attribute: Causes Fear when fighting against Greenskins
+  Attribute: Causes Fear when fighting against High Elves
+  Attribute: Causes Fear when fighting against Humans
+  Attribute: Causes Fear when fighting against Khornate factions
+  Attribute: Causes Fear when fighting against Kislev
+  Attribute: Causes Fear when fighting against Lizardmen
+  Attribute: Causes Fear when fighting against Nurglish factions
+  Attribute: Causes Fear when fighting against Ogre Kingdoms
+  Attribute: Causes Fear when fighting against Skaven
+  Attribute: Causes Fear when fighting against Slaaneshi factions
+  Attribute: Causes Fear when fighting against Tomb Kings
+  Attribute: Causes Fear when fighting against Tzeentchian factions
+  Attribute: Causes Fear when fighting against Vampire Coast
+  Attribute: Causes Fear when fighting against Vampire Counts
+  Attribute: Causes Fear when fighting against Warriors of Chaos, Chaos Dwarfs, Daemons of Chaos and Norsca
+  Attribute: Causes Fear when fighting against Wood Elves
+  Attribute: Causes Terror when fighting against Dwarfs
+  Attribute: Causes Terror when fighting against Kislev
+  Enables flaming attacks  (x2)
+  Enables flaming attacks when fighting against Wood Elves
+  Enables poison attacks
+
+== ARMY ==
+  Leadership aura size: +130% when attacking   (from 2 traits)
+  Winds of Magic power reserve capacity: +101   (from 10 traits)
+  Armour-piercing weapon damage: +100% for Black Ark Corsairs units   (from 1 trait)
+  Armour-piercing missile damage: +100% for Black Ark Corsairs units   (from 1 trait)
+  Income from raiding: +95%   (from 4 traits)
+  Construction cost: -72% for all buildings   (from 7 traits)
+  Attrition: -70% casualties suffered from all attrition   (from 3 traits)
+  Ambush defence chance: +60%   (from 4 traits)
+  Leadership aura size: +55%   (from 3 traits)
+  Enemy Winds of Magic power reserve capacity: -55   (from 3 traits)
+  Enemy Hero action success chance: -53%   (from 7 traits)
+  Attrition: -50% casualties suffered from Vampiric territory attrition   (from 1 trait)
+  Campaign movement range: +50%   (from 4 traits)
+  Ambush success chance: +45%   (from 3 traits)
+  Magic item drop chance from battle: +45%   (from 4 traits)
+  Ammunition: +40%   (from 1 trait)
+  Upkeep: -37%   (from 4 traits)
+  Range: +35% for Shades units   (from 1 trait)
+  Campaign movement range: +35%   (from 4 traits)
+  Recruitment cost: -35% for Cavalry units   (from 2 traits)
+  Hero action cost: -35%   (from 2 traits)
+  Construction time: -35% for all buildings   (from 1 trait)
+  Recruitment cost: -32%   (from 4 traits)
+  Armour: +30 for Shades and Dark Riders units   (from 1 trait)
+  Upkeep: -30% for Dreadspears, Darkshards and Bleakswords units   (from 1 trait)
+  Chance of intercepting an army using {{tr:ui_text_replacements_localised_text_tunnelling_stance}}, beast-paths or Worldroots: +30%   (from 2 traits)
+  Leadership aura size: +30% when defending   (from 1 trait)
+  Enemy leadership: -30   (from 6 traits)
+  Upkeep: -30% for Chariot units   (from 1 trait)
+  Upkeep: -30% for Little Grom units   (from 1 trait)
+  Upkeep: -30% for War Sleds units   (from 1 trait)
+  Spell resistance: 25%   (from 2 traits)
+  {{tr:agent_action_name_assault_unit}} action: Additional 20% damage caused   (from 1 trait)
+  {{tr:agent_action_name_damage_building}} action: Additional 20% damage caused   (from 1 trait)
+  Charge bonus: +20 for Harpies, War Hydra, Kharibdyss, Black Dragon, Feral Manticore and Bloodwrack Medusae units   (from 1 trait)
+  Upkeep: -20% for Harpies, War Hydra, Bloodwrack Medusa, Kharibdyss, Black Dragon and Feral units   (from 1 trait)
+  Casualty replenishment rate: +20% for this Lord   (from 1 trait)
+  Reinforcement range: +20%   (from 1 trait)
+  Missile strength: +20% for Ice Guard units   (from 2 traits)
+  Upkeep: -20% for Infantry units   (from 2 traits)
+  Melee attack: +18 for Ice Guard units   (from 2 traits)
+  Missile strength: +17%   (from 2 traits)
+  Weapon strength: +17% for Infantry units   (from 2 traits)
+  {{tr:agent_action_name_assault_garrison}} action: Additional 15% casualties inflicted   (from 1 trait)
+  {{tr:agent_action_name_assault_units}} action: Additional 15% casualties inflicted   (from 1 trait)
+  Upkeep: -15% for Witch Elves and Sisters of Slaughter units   (from 1 trait)
+  Upkeep: -15% for Cold One Knights, Cold One Dread Knights and Cold One Chariot units   (from 1 trait)
+  Leadership: +15 during ambushes   (from 1 trait)
+  Upkeep: -15% for Shades, Dark Riders, Doomfire Warlocks and Scourgerunner Chariot units   (from 1 trait)
+  Upkeep: -15% for Black Ark Corsairs units   (from 1 trait)
+  Reload time reduction: +15% for Reaper Bolt Thrower and Scourgerunner Chariot units   (from 1 trait)
+  Leadership: +15 when laying siege or encircling   (from 2 traits)
+  Casualties captured post-battle: +15%   (from 1 trait)
+  {{tr:public_order_effect}}: -15   (from 4 traits)
+  Leadership: +15   (from 4 traits)
+  Attrition: +15% when under siege   (from 1 trait)
+  Attrition: -15% when under siege   (from 1 trait)
+  Hero action success chance: +15% for Frost Maidens   (from 1 trait)
+  Recruitment cost: -15% for Infantry units   (from 1 trait)
+  Spell resistance: -15%   (from 2 traits)
+  Melee attack: +13 when fighting at sea   (from 2 traits)
+  Weapon strength: +13%   (from 2 traits)
+  Leadership: +12 when fighting at sea   (from 1 trait)
+  Speed: +11%   (from 2 traits)
+  Armour: +11   (from 2 traits)
+  {{tr:agent_action_name_block_army}} action: Movement range is modified by an additional -10%   (from 1 trait)
+  Ward save: 10% for Witch Elves and Sisters of Slaughter units   (from 1 trait)
+  Leadership: +10 for Cold One Knights, Cold One Dread Knights and Cold One Chariot units   (from 1 trait)
+  Weapon strength: +10% for Cold One Knights, Cold One Dread Knights and Cold One Chariot units   (from 1 trait)
+  Leadership: +10 for Harpies, War Hydra, Bloodwrack Medusa, Kharibdyss, Black Dragon and Feral units   (from 1 trait)
+  Leadership: +10 for Bleakswords, Dreadspears and Darkshards (Shields) units   (from 1 trait)
+  Physical resistance: 10% for Bleakswords, Dreadspears and Darkshards (Shields) units   (from 1 trait)
+  Character's aura leadership effect: +10   (from 1 trait)
+  Armour: +10 for Black Guard of Naggarond units   (from 1 trait)
+  Enemy leadership: -10 when enemy lays siege or encircles   (from 1 trait)
+  Unit experience gain: +10%   (from 1 trait)
+  Hero self-defence: +10% chance of wounding aggressors   (from 1 trait)
+  Reload time reduction: +10% for Tiranoc Chariot units   (from 1 trait)
+  Speed: +10% for Chariot units   (from 1 trait)
+  Charge bonus: +10% for Cavalry units   (from 1 trait)
+  Upkeep: -10% for Cavalry units   (from 1 trait)
+  Melee attack: +10 for Dire Wolves and Fell Bats units   (from 1 trait)
+  {{tr:agent_action_name_wound}} action: Additional 9% chance of wounding target   (from 1 trait)
+  Leadership: +8 when fighting against Vampire Counts   (from 2 traits)
+  Leadership: +8 when fighting against Warriors of Chaos, Daemons of Chaos, Chaos Dwarfs and Norsca   (from 1 trait)
+  Winds of Magic cost: -8% for all spells   (from 2 traits)
+  {{tr:agent_action_name_assassinate}} action: Additional 6% success chance   (from 1 trait)
+  Leadership: +6 when in own territory   (from 1 trait)
+  Range: +5%   (from 1 trait)
+  Melee attack: +5 for Shades and Dark Riders units   (from 1 trait)
+  Leadership: +5 during subterranean intercept battles   (from 1 trait)
+  Leadership: +5 when fighting against Beastmen   (from 1 trait)
+  Leadership: +5 when fighting against Cathay   (from 1 trait)
+  Leadership: +5 when fighting against Warriors of Chaos, Daemons of Chaos and Norsca   (from 1 trait)
+  Leadership: +5 when fighting against Chaos Dwarfs   (from 1 trait)
+  Leadership: +5 when fighting against Daemons of Chaos   (from 1 trait)
+  Leadership: +5 when fighting against Dark Elves   (from 1 trait)
+  Leadership: +5 when fighting against Dwarfs   (from 1 trait)
+  Leadership: +5 when fighting against Greenskins   (from 1 trait)
+  Leadership: +5 when fighting against High Elves   (from 1 trait)
+  Leadership: +5 when fighting against Humans   (from 1 trait)
+  Leadership: +5 when fighting against Khornate factions   (from 1 trait)
+  Leadership: +5 when fighting against Kislev   (from 1 trait)
+  Leadership: +5 when fighting against Lizardmen   (from 1 trait)
+  Leadership: +5 when fighting against Nurglish factions   (from 1 trait)
+  Leadership: +5 when fighting against Ogre Kingdoms   (from 1 trait)
+  Leadership: +5 when fighting against Rogue Armies   (from 1 trait)
+  Leadership: +5 when fighting against Skaven   (from 1 trait)
+  Leadership: +5 when fighting against Slaaneshi factions   (from 1 trait)
+  Leadership: +5 when fighting against Tomb Kings   (from 1 trait)
+  Leadership: +5 when fighting against Tzeentchian factions   (from 1 trait)
+  Leadership: +5 when fighting against Vampire Coast   (from 1 trait)
+  Leadership: +5 when fighting against Wood Elves   (from 1 trait)
+  Casualty replenishment rate: +5%   (from 1 trait)
+  Charge bonus: +5   (from 1 trait)
+  Hero action success chance: +5%   (from 1 trait)
+  Melee attack: +5%   (from 1 trait)
+  Leadership: +4 when attacking   (from 1 trait)
+  Leadership: +4 when defending   (from 1 trait)
+  Melee attack: +3 for Melee Infantry units   (from 1 trait)
+  Melee defence: +3 for Melee Infantry units   (from 1 trait)
+  Melee defence: +3   (from 1 trait)
+  {{tr:agent_action_name_damage_walls}} action: 2 additional wall breaches   (from 1 trait)
+  Recruit rank: +2 for Witch Elves and Sisters of Slaughter units   (from 1 trait)
+  Recruit rank: +2 for Shades units   (from 1 trait)
+  Recruit rank: +2 for Black Guard of Naggarond units   (from 1 trait)
+  Recruit rank: +2 for Dreadspears, Darkshards and Bleakswords units   (from 1 trait)
+  Melee attack: +2 when fighting against Warriors of Chaos, Daemons of Chaos, Chaos Dwarfs, Norsca and Beastmen   (from 1 trait)
+  Recruit rank: +2 for all units   (from 2 traits)
+  Melee attack: +2   (from 1 trait)
+  Meat generated: 2   (from 1 trait)
+  Seduce Units budget: +0%   (from 2 traits)
+  -- attributes / abilities granted --
+  Attribute: Causes Fear for Black Guard of Naggarond units
+  Attribute: Causes Fear for Shades units
+  Attribute: Unbreakable
+  Enables frostbite attacks
+  Immune to Athel Loren attrition
+  Immune to Swamp attrition
+  Immune to attrition
+  {{tr:effects_description_wh_main_effect_character_stat_enable_magic_attacks}}
+
+== ECONOMY ==
+  Income from all buildings: +74%   (from 7 traits)
+  Growth: +65   (from 4 traits)
+  Income from sacking and looting settlements: +50%   (from 1 trait)
+  Income from sacking settlements: +42%   (from 2 traits)
+  Growth: +30   (from 2 traits)
+  Hero recruitment cost: -30% for Patriarchs   (from 1 trait)
+  Upkeep: -30% for Little Grom units   (from 1 trait)
+  Upkeep: -30% for War Sleds units   (from 1 trait)
+  {{tr:public_order_effect}}: +28   (from 8 traits)
+  Income from Salvage buildings: +25%   (from 1 trait)
+  {{tr:effect_technology_research_points_description}}: +20   (from 2 traits)
+  {{tr:agent_action_name_steal_technology}} action: Research rate is increased by an additional 15   (from 2 traits)
+  Income from trade tariffs: +15%   (from 2 traits)
+  Income from post-battle loot: +15%   (from 2 traits)
+  Recruitment cost: -15% for Cavalry units   (from 1 trait)
+  Recruitment cost: -15% for Infantry units   (from 1 trait)
+  Upkeep: -12%   (from 2 traits)
+  {{tr:agent_action_name_hinder_replenishment}} action: Replenishment is modified by an additional -10%   (from 1 trait)
+  Income from Ports: +10%   (from 1 trait)
+  Income from Industry buildings: +10%   (from 1 trait)
+  Income from Province Capital/Settlement buildings: +10%   (from 1 trait)
+  Casualty replenishment rate: +10%   (from 1 trait)
+  Upkeep: -10% for Infantry units   (from 1 trait)
+  Hero recruit rank: +6 for Frost Maidens   (from 2 traits)
+  Recruitment cost: -6%   (from 1 trait)
+  {{tr:public_order_effect}}: +3   (from 2 traits)
+  Hero recruit rank: +3 for Patriarchs   (from 1 trait)
+  Recruit rank: +2 for Cavalry units   (from 1 trait)
+  Recruit rank: +2 for Infantry units   (from 1 trait)
+  Local Recruitment duration: -1 turn for Chariot units (minimum 1)   (from 1 trait)
+
+== DIPLOMACY ==
+  Diplomatic relations: +30 with all Kislev factions   (from 2 traits)
+  Diplomatic relations: +15 with Dark Elves   (from 2 traits)
+  Diplomatic relations: +10 with Beastmen   (from 1 trait)
+  Diplomatic relations: +10 with Grand Cathay   (from 1 trait)
+  Diplomatic relations: +10 with Warriors of Chaos   (from 1 trait)
+  Diplomatic relations: +10 with Chaos Dwarfs   (from 1 trait)
+  Diplomatic relations: +10 with Daemons of Chaos   (from 1 trait)
+  Diplomatic relations: +10 with Dwarfs   (from 1 trait)
+  Diplomatic relations: +10 with Greenskins   (from 1 trait)
+  Diplomatic relations: +10 with High Elves   (from 1 trait)
+  Diplomatic relations: +10 with Bretonnia   (from 1 trait)
+  Diplomatic relations: +10 with Empire   (from 1 trait)
+  Diplomatic relations: +10 with Khornate factions   (from 1 trait)
+  Diplomatic relations: +10 with Lizardmen   (from 1 trait)
+  Diplomatic relations: +10 with Nurglish factions   (from 1 trait)
+  Diplomatic relations: +10 with Ogre Kingdoms   (from 1 trait)
+  Diplomatic relations: +10 with Skaven   (from 1 trait)
+  Diplomatic relations: +10 with Slaaneshi factions   (from 1 trait)
+  Diplomatic relations: +10 with Tomb Kings   (from 1 trait)
+  Diplomatic relations: +10 with Tzeentchian factions   (from 1 trait)
+  Diplomatic relations: +10 with Vampire Coast   (from 1 trait)
+  Diplomatic relations: +10 with Vampire Counts   (from 1 trait)
+  Diplomatic relations: +10 with Wood Elves   (from 1 trait)
