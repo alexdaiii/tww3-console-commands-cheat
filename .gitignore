@@ -14,3 +14,4 @@ WH3-Dump/
 # Generated SQLite mirror of the game DB (large, rebuildable via build_db.py)
 *.sqlite
 tww3_traits/wh3.sqlite
+.~lock.

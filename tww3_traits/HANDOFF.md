@@ -29,8 +29,13 @@ after the header row — skip it when parsing (join_traits.py's `read_tsv` alrea
   `game_and_dlc`.
 - `curate_traits.py` — filters/curates the "power" traits and buckets them by target area
   (survivability / attack / army / economy / **diplomacy**). Outputs `power_traits.xlsx` +
-  `power_traits.lua`. Current result: **306 traits** (39 survivability, 60 attack, 149 army,
-  36 economy, 22 diplomacy).
+  `power_traits.lua` + **`power_traits_summary.txt`** (write_summary(): aggregate benefit —
+  numeric stats summed additively per effect key and rendered back through the effect's own
+  loc template; enable-type effects Fear/poison/abilities listed with counts. Self- vs
+  army-scope are pooled, so it's a gross paper sum. A few labels show raw `{{tr:...}}` loc
+  tokens — cosmetic single-pass render gap; numbers are correct).
+  Current result: **306 traits** (39 survivability, 60 attack, 149 army, 36 economy,
+  22 diplomacy).
   Key logic quirks (bugs I fixed — don't reintroduce):
     * **`FORCE_INCLUDE`** = explicit allow-list (16 keys) the user hand-picked off the
       `excluded_traits.xlsx` bench: battle abilities (poison / Glacial Blast / Ice Shard),
