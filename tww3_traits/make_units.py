@@ -199,11 +199,17 @@ def main():
     ap.add_argument("--army", help="Only build this one army_name.")
     args = ap.parse_args()
 
+    # Resolve the CSV, trying (in order): the path as given, the kit subdir
+    # (<HERE>/<stem>/<stem>.csv, e.g. kairos/kairos.csv), then the script dir.
     csv_path = args.csv if os.path.isabs(args.csv) else os.path.join(os.getcwd(), args.csv)
-    if not os.path.exists(csv_path):
-        # also try relative to the script dir for convenience
-        alt = os.path.join(HERE, os.path.basename(args.csv))
-        csv_path = alt if os.path.exists(alt) else csv_path
+    base = os.path.basename(args.csv)
+    stem = re.sub(r"\.csv$", "", base, flags=re.I)
+    for cand in (csv_path,
+                 os.path.join(HERE, stem, base),   # kit subdir: kairos/kairos.csv
+                 os.path.join(HERE, base)):         # script dir
+        if os.path.exists(cand):
+            csv_path = cand
+            break
     if not os.path.exists(csv_path):
         raise SystemExit(f"No CSV at {args.csv}. Columns: unit_id, num_units, army_name.")
 

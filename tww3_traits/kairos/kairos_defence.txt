@@ -1,0 +1,44 @@
+# kairos_defence.txt  -  one effect_bundle id per line (blank / #comment lines skipped).
+# Generate with:  python3 make_apply_bundles_lua.py kairos   -> kairos/kairos_defence.lua
+# Each bundle is applied to the SELECTED lord's ARMY (force-scope = every unit).
+#
+# STACKING: distinct bundle keys stack (their effects sum); re-applying the SAME
+# key only refreshes it. So to push a stat higher, add MORE different bundles that
+# grant it. Every id below is force_to_force_own scope (reliable via
+# apply_effect_bundle_to_force) and side-effect-free (vetted in wh3.sqlite:
+# effect_bundles_to_effects_junctions). The nur_battle "_blessed" and plain tiers
+# are DIFFERENT keys, so both stack.
+#
+# CAPS (why "even higher" has a practical ceiling): resistances (missile /
+# physical / fire / magic ward, and Ward Save) are all capped at 90% TOTAL, so
+# excess above that is wasted. Armour mitigation effectively caps ~140. Melee
+# Defence and Barrier have no hard cap.
+
+# ================= MELEE DEFENCE  (~+44 total) =================
+wh2_main_incident_all_melee_defense_up          # Defensive Drills: +15 MD (base game, clean)
+wh3_main_dilemma_ogr_6_first                     # A Hearty Brunch: +10 MD, +10 Melee Attack
+wh3_dlc25_nur_battle_1_positive_blessed          # +8 MD (untitled)
+wh3_main_incident_nur_8                          # Chicken-Scratch: +7 MD, +7% Armour(mult)
+wh3_dlc25_nur_battle_1_positive                  # +4 MD (untitled)
+
+# ================= ARMOUR  (~+65 total, caps ~140) =================
+wh3_dlc25_nur_battle_2_positive_blessed          # +30 Armour (untitled)
+wh3_dlc25_nur_random_plague_3_force_positive     # +20 Armour, +10 Weapon Strength (untitled)
+wh3_dlc25_nur_battle_2_positive                  # +15 Armour (untitled)
+
+# ============ RANGED DEFENCE: missile resistance (~+45%) + block ============
+wh3_dlc25_nur_battle_3_positive_blessed          # +20% Missile Resistance (untitled)
+wh3_dlc25_nur_random_plague_2_force_positive     # +15% Missile Resistance (untitled)
+wh3_dlc25_nur_battle_3_positive                  # +10% Missile Resistance (untitled)
+wh3_dlc24_ritual_cth_mos_steel_army_combat_buff  # Celestial Intervention: +15% Missile Block, 360deg, +45% Speed, +army ability
+
+# ================= PHYSICAL RESISTANCE  (~+40%, caps 90%) =================
+wh3_nur_plague_component_recipe_5_own_force      # Nurgle's Rot: +20% Physical Resistance
+wh3_dlc27_hef_white_tower_ritual_life_army_instant_heal  # +20% Physical Resistance (+ one-off heal)
+
+# ================= WARD SAVE  (+15%; only force-scope option) =================
+wh3_dlc27_nor_monstrous_arcanum_decoy_dilemma_7_option_1  # +15% Ward Save, +6 Leadership
+
+# ================= BARRIER (Tzeentch-native, ~+65%) =================
+wh3_main_ritual_tze_gg_3_upgraded                # Magic Flare: +40% Barrier, +30% Ammo, +30% Range
+wh3_main_ritual_tze_gg_3                          # Magic Flare (tier 1): +25% Barrier, +30% Ammo, +30% Range

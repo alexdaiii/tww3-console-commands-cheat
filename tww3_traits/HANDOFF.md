@@ -23,6 +23,18 @@ Data source: **WH3-Dump/** — a local TSV clone of the game DB. Every table is 
 `WH3-Dump/db/<table>_tables/data__.tsv`. NOTE: each file has a `#comment` line right
 after the header row — skip it when parsing (join_traits.py's `read_tsv` already handles this).
 
+### Kit output layout (per-character subdir)
+Per-character deliverables now live in a **kit subdir** named after the kit: everything
+Kairos is in **`kairos/`** (`kairos.txt`/`kairos.lua` items, `kairos.csv` + `kairos_<army>.lua`,
+`kairos_skills.txt`/`.lua`, `kairos_defence.txt`/`.lua`). The generators resolve kit files
+there automatically: `make_apply_items_lua.py kairos` reads `kairos/kairos.txt` → writes
+`kairos/kairos.lua`; `make_units.py kairos.csv` finds `kairos/kairos.csv` and writes into
+`kairos/`; the skills/bundles generators follow the same `<kit>/<kit>_*.{txt,lua}` rule (each
+falls back to a root-level file for backward-compat, and creates the kit dir on demand). Shared
+catalogs (`items.xlsx`, `power_traits.*`, `all_effects*.xlsx`, `traits*.xlsx`, `wh3.sqlite`) and
+the generic hand-edit scripts (`apply_selected_*.lua`) stay at the root. A future faction reuses
+the same generators with its own name → its own subdir (e.g. `cathay/`).
+
 ### Traits pipeline
 - `join_traits.py` — joins character_traits + trait_levels + effects + loc into a readable
   sheet. Provides reusable helpers: `read_tsv`, `read_loc`, `render_effect`, `clean_text`,
@@ -111,6 +123,60 @@ after the header row — skip it when parsing (join_traits.py's `read_tsv` alrea
       because the loc key is `..._flamer_0` (singular). unit_id is correct; only the
       comment is blank. Fix would need the `main_units.land_unit` mapping — user said skip.
 - `kairos.csv` — the deliverable army lists (early / mid / late), see below.
+
+### Skills pipeline  (added this session)
+- `make_apply_skills_lua.py` — the SKILLS twin of make_apply_items_lua.py. Turns
+  `kairos/kairos_skills.txt` (one `character_skills` id per line) into `kairos/kairos_skills.lua`
+  via `cm:force_add_skill(char_lookup_str, skill_key)`, which **bypasses rank / skill-point /
+  own-tree checks**. Annotates each id with its onscreen name from
+  `WH3-Dump/text/db/character_skills__.loc.tsv` (key `character_skills_localised_name_<key>`).
+  Run: `python3 make_apply_skills_lua.py kairos`.
+    * **Why skills matter (from the effects investigation):** an `..._ability_enable_...` effect
+      is never applied on its own — it rides on a container (item / trait / **skill**). Kairos's
+      unit key is `wh3_main_tze_cha_kairos_fateweaver_0`; subtype `wh3_main_tze_kairos`; skill
+      node set `wh3_main_skill_node_set_tze_kairos` (47 nodes). The tagged abilities in
+      `all_effects_anno.xlsx` map to containers: Tome of Furion / Winged Staff / Axe of Tor are
+      **items** (already grantable via kairos.txt); Locus of Transmogrification & Gate of
+      Tzeentch are **skills** (grafted here); Gate of Chaos has no grantable container.
+    * `kairos_skills.txt` = 48 ids: 2 **off-tree grafts** at top (Locus of Transmogrification
+      `wh3_main_skill_tze_locus_of_transmogrification`, Gate of Tzeentch
+      `wh3_main_skill_tze_cultist_unique_gate_of_tzeentch` — abilities his own tree never offers;
+      experimental, may be rejected as out-of-tree) + his **entire own tree** to max him out.
+      Deliberately omits the hidden internal scaler `wh3_main_skill_agent_action_success_scaling`.
+
+### Defensive bundles pipeline  (added this session)
+- `make_apply_bundles_lua.py` — applies existing **effect_bundles** to the selected lord's ARMY
+  via `cm:apply_effect_bundle_to_force(bundle_key, military_force_cqi, TURNS)` (TURNS 0 =
+  permanent). This is the army-wide-buff route: a trait/item buffs one character, but a bundle
+  carries FORCE-scope effects that hit every unit. Reads `kairos/kairos_defence.txt`, writes
+  `kairos/kairos_defence.lua`, and auto-annotates each bundle's title + per-effect readable by
+  importing `join_traits as J` (registers the `effect_bundles_to_effects_junctions` +
+  `effect_bundles`/`effects` loc tables; **sets `J.REPO` explicitly** because J's module-global
+  REPO otherwise picks up `sys.argv[1]`, which for this script is the kit name).
+  Run: `python3 make_apply_bundles_lua.py kairos`.
+    * **Hard limit (established):** the "run arbitrary lua" console mod can *apply* existing
+      bundles but **cannot mint a new one** — a bespoke "+X to all defences" bundle needs a
+      `.pack` DB mod. So `kairos_defence.txt` borrows existing bundles for their stats; vet any
+      addition against the `wh3.sqlite` mirror (`effect_bundles_to_effects_junctions`) so you
+      don't drag in side effects. Prefer `force_to_force_own` scope + single-effect bundles.
+    * **Stacking:** distinct bundle keys stack (effects sum); re-applying the SAME key only
+      refreshes it. To push a stat higher, add MORE different force-scope bundles granting it
+      (the nur_battle `_blessed` and plain tiers are different keys, so both stack). The
+      generator now **sums** same-label numeric effects in its combined-totals header
+      (`sum_effects()`, mirrors make_apply_lua's combine_effects).
+    * **Caps:** resistances (missile / physical / fire / magic ward AND Ward Save) cap at 90%
+      total; armour mitigation effectively caps ~140; Melee Defence and Barrier have no hard cap.
+    * Current **17-bundle** set (all `force_to_force_own`, vetted side-effect-free) sums to:
+      **+44 Melee Defence**, **+65 Armour** (+7% mult), **+45% Missile Resistance**, **+15%
+      Missile Block / 360°** + **+45% Speed** + **Celestial Intervention** army ability (Cathay
+      ritual), **+40% Physical Resistance**, **+15% Ward Save / +6 Leadership**, **+65% Barrier
+      / +50% Ammo / +50% Range** (2× Magic Flare tiers, Tzeentch-native), plus rider buffs
+      (+10 Melee Attack, +10% Weapon Strength, one-off army heal). Ward is stuck at +15 because
+      that's the only force-scope ward bundle — more ward needs faction-level apply
+      (`cm:apply_effect_bundle`) or a `.pack`. The `wh3_dlc25_nur_battle_*` picks are functionally
+      clean but have **no player-facing tooltip title** (show as unnamed buff icons). Rejected:
+      `nor_monstrous_arcanum_dilemma_7_option_3` (+10% upkeep) and the Festus missile bundle
+      (spreads Nurgle corruption).
 
 ### Kairos army compositions (base game WH3 only, no DLC; `au`-ready)
 Design rule the user set: **tier is a per-stage power CEILING** (so you don't stomp

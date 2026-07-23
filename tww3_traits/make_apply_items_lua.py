@@ -209,10 +209,23 @@ def main():
     args = ap.parse_args()
 
     # Resolve input/output from the kit name (positional) unless overridden.
+    # A named kit lives in its own subdir: <HERE>/<kit>/<kit>.txt -> <kit>.lua.
+    # The bare "items" default keeps the legacy root-level layout.
     base = args.name or "items"
-    default_out = "apply_selected_items.lua" if base == "items" else f"{base}.lua"
-    txt_path = args.txt or os.path.join(HERE, f"{base}.txt")
-    out_path = args.out or os.path.join(HERE, default_out)
+    if base == "items":
+        txt_path = args.txt or os.path.join(HERE, "items.txt")
+        out_path = args.out or os.path.join(HERE, "apply_selected_items.lua")
+    else:
+        kit_dir = os.path.join(HERE, base)
+        os.makedirs(kit_dir, exist_ok=True)
+        default_txt = os.path.join(kit_dir, f"{base}.txt")
+        # backward-compat: fall back to a root-level <kit>.txt if the kit dir has none
+        if not args.txt and not os.path.exists(default_txt):
+            legacy = os.path.join(HERE, f"{base}.txt")
+            if os.path.exists(legacy):
+                default_txt = legacy
+        txt_path = args.txt or default_txt
+        out_path = args.out or os.path.join(kit_dir, f"{base}.lua")
 
     if not os.path.exists(txt_path):
         raise SystemExit(f"No id list at {txt_path}. Create it (one ancillary id per line).")

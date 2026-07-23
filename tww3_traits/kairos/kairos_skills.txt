@@ -1,0 +1,73 @@
+# kairos_skills.txt  -  one character_skills id per line (blank / #comment lines skipped).
+# Generate with:  python3 make_apply_skills_lua.py kairos   -> kairos/kairos_skills.lua
+# force_add_skill bypasses rank / skill-points / own-tree checks, so every line
+# below gets unlocked on the selected character at once. Trim any group you don't want.
+
+# ========================================================================
+# OFF-TREE GRAFTS  -  abilities Kairos's own tree never offers. These skills
+# belong to OTHER Tzeentch characters; force_add_skill grafts them onto Kairos
+# so he gains the bound ability they carry. (Experimental - if one doesn't take,
+# it's the game rejecting an out-of-tree skill; the rest are unaffected.)
+# ========================================================================
+wh3_main_skill_tze_locus_of_transmogrification      # Locus of Transmogrification (aura: enemy melee-defence debuff)
+wh3_main_skill_tze_cultist_unique_gate_of_tzeentch  # Gate of Tzeentch (campaign teleport ability, +uses)
+
+# ========================================================================
+# KAIROS OWN TREE  -  his full skill set (max him out).
+# ------------------------------------------------------------------------
+# Magic / spellcasting mastery
+wh3_main_skill_tze_kairos_magic_core_1
+wh3_main_skill_tze_kairos_magic_core_2
+wh3_main_skill_tze_kairos_magic_core_3
+wh3_main_skill_tze_kairos_magic_core_4
+wh3_main_skill_tze_kairos_magic_core_5
+wh3_main_skill_tze_kairos_magic_extra_starter
+wh3_main_skill_tze_kairos_magic_extra_1
+wh3_main_skill_tze_kairos_magic_extra_2
+wh3_main_skill_tze_kairos_magic_extra_4
+wh3_main_skill_tze_kairos_magic_extra_capstone
+
+# Self / survivability (personal buffs, incl. missile resistance)
+wh3_main_skill_innate_tze_kairos
+wh3_main_skill_tze_kairos_self_oracle_of_eternity
+wh3_main_skill_tze_kairos_self_2
+wh3_main_skill_tze_kairos_self_3
+wh3_main_skill_tze_kairos_self_4
+wh3_main_skill_tze_kairos_self_5
+wh3_main_skill_tze_kairos_self_6
+wh3_main_skill_tze_kairos_self_8
+wh3_main_skill_tze_all_unique_missile_resist
+wh2_main_skill_ll_self_defense
+wh3_main_skill_tze_lord_unique_gaze_of_fate
+wh3_main_skill_tze_lord_unique_hidden_in_time
+
+# Army-wide buffs (force-scope)
+wh3_main_skill_tze_lord_army_buff_1_1
+wh3_main_skill_tze_lord_army_buff_1_2
+wh3_main_skill_tze_lord_army_buff_1_3
+wh3_main_skill_tze_lord_army_buff_1_4
+wh3_main_skill_tze_lord_army_buff_1_5
+wh3_main_skill_tze_lord_army_buff_3_1
+wh3_main_skill_tze_lord_army_buff_3_2
+wh3_main_skill_tze_lord_army_buff_3_3
+wh3_main_skill_tze_lord_army_buff_3_4
+wh3_main_skill_tze_lord_army_seer_of_destiny
+wh3_main_skill_tze_lord_army_master_of_fates
+
+# Campaign utility (movement, ambush, upkeep, replenish, lightning strike, etc.)
+wh_main_skill_all_lord_battle_inspiring_presence
+wh_main_skill_all_lord_campaign_route_marcher
+wh_main_skill_all_lord_campaign_lightning_strike
+wh3_main_skill_all_mentor_lord
+wh3_main_skill_tze_generic_hates_nurgle
+wh3_main_skill_tze_kairos_campaign_public_order
+wh3_main_skill_tze_kairos_campaign_ambush
+wh3_main_skill_tze_kairos_campaign_changing_of_the_ways_cooldown
+wh3_main_skill_tze_kairos_campaign_changing_of_the_ways_cost
+wh3_main_skill_tze_kairos_campaign_intention_insight
+wh3_main_skill_tze_lord_campaign_grimoires
+wh3_main_skill_tze_lord_campaign_upkeep
+wh3_main_skill_tze_lord_campaign_replenish
+
+# Note: wh3_main_skill_agent_action_success_scaling (hidden internal scaler) is
+# deliberately omitted - it's not a real player skill.
