@@ -1,0 +1,4 @@
+# Excel workbooks are binary: no text diffing, no line-ending/whitespace munging,
+# no attempts at 3-way merge. Git's built-in `binary` macro = -diff -merge -text.
+*.xlsx binary
+*.xls  binary
